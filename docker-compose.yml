@@ -1,0 +1,11 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: iris-negra-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - iris_negra_mongo:/data/db
+
+volumes:
+  iris_negra_mongo:
