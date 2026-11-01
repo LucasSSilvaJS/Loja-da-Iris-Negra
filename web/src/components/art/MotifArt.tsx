@@ -18,7 +18,7 @@ function Glyph({ motif }: { motif: Motif }) {
     <svg viewBox="0 0 160 160" role="img">
       <rect width="160" height="160" fill="#100814" />
       <circle cx="118" cy="36" r="18" fill="#f7f2ff" opacity="0.85" />
-      <circle cx="80" cy="86" r="22" fill="none" stroke="#ff2fbf" strokeWidth="3" />
+      <circle cx="80" cy="86" r="22" fill="none" stroke="#734c9e" strokeWidth="3" />
       {motif === 'raven' && <Raven />}
       {motif === 'iris' && <Iris x={80} y={92} scale={1} />}
       {motif === 'moon' && <MoonWord />}
@@ -44,7 +44,7 @@ function StageArt() {
       </defs>
       <rect width="640" height="720" fill="#07060a" />
       <circle cx="320" cy="300" r="210" fill="url(#glow)" />
-      <circle cx="320" cy="292" r="168" fill="none" stroke="#ff2fbf" strokeWidth="2" opacity="0.7" />
+      <circle cx="320" cy="292" r="168" fill="none" stroke="#734c9e" strokeWidth="2" opacity="0.7" />
       <circle cx="320" cy="292" r="128" fill="none" stroke="#fff" strokeWidth="1" opacity="0.35" />
       {Array.from({ length: 12 }).map((_, index) => (
         <line
@@ -72,13 +72,13 @@ function Iris({ x, y, scale }: { x: number; y: number; scale: number }) {
   return (
     <g transform={`translate(${x} ${y}) scale(${scale})`}>
       <path d="M0 -34c8 10 8 16 0 22-8-6-8-12 0-22z" fill="#f4f0ff" />
-      <path d="M0 34c8-10 8-16 0-22-8 6-8 12 0 22z" fill="#ff2fbf" />
+      <path d="M0 34c8-10 8-16 0-22-8 6-8 12 0 22z" fill="#734c9e" />
       <path d="M-34 0c10-8 16-8 22 0-6 8-12 8-22 0z" fill="#f4f0ff" />
-      <path d="M34 0c-10-8-16-8-22 0 6 8 12 8 22 0z" fill="#ff2fbf" />
+      <path d="M34 0c-10-8-16-8-22 0 6 8 12 8 22 0z" fill="#734c9e" />
       <path d="M-24 -24c12 2 16 8 14 16-8-2-12-8-14-16z" fill="#fff" />
       <path d="M24 -24c-12 2-16 8-14 16 8-2 12-8 14-16z" fill="#ff7adf" />
       <circle r="7" fill="#07060a" />
-      <circle r="3" fill="#ff2fbf" />
+      <circle r="3" fill="#734c9e" />
     </g>
   )
 }
@@ -121,7 +121,7 @@ function Corset() {
     <path
       d="M58 36h44l10 88H48L58 36zm10 16h24M62 68h36M60 84h40"
       fill="none"
-      stroke="#ff2fbf"
+      stroke="#734c9e"
       strokeWidth="4"
     />
   )
@@ -135,6 +135,6 @@ function Jacket() {
 
 function Top() {
   return (
-    <path d="M50 48h60l8 18-16 8v42H58V74l-16-8 8-18z" fill="none" stroke="#ff2fbf" strokeWidth="4" />
+    <path d="M50 48h60l8 18-16 8v42H58V74l-16-8 8-18z" fill="none" stroke="#734c9e" strokeWidth="4" />
   )
 }

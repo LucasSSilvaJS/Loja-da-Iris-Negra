@@ -1,4 +1,5 @@
 import { useBagDock } from '../checkout/CartDrawer'
+import { ScrollTopButton } from './ScrollTopButton'
 import { useChatDock } from './ChatDock'
 
 type CornerDockProps = {
@@ -18,6 +19,7 @@ export function CornerDock({ chatOpen, showChat, onChatOpenChange }: CornerDockP
         {showChat && chat.panel}
       </div>
       <div className="corner-toggles">
+        <ScrollTopButton />
         {bag.button}
         {showChat && chat.button}
       </div>

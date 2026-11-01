@@ -9,15 +9,22 @@ export class ApiError extends Error {
 
 const base = (import.meta.env.VITE_API_URL ?? '/api').replace(/\/$/, '')
 
+const offline = 'Servidor fora do ar'
+
 export async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${base}${path}`, {
-    ...init,
-    headers: {
-      Accept: 'application/json',
-      ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
-      ...init?.headers,
-    },
-  })
+  let response: Response
+  try {
+    response = await fetch(`${base}${path}`, {
+      ...init,
+      headers: {
+        Accept: 'application/json',
+        ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
+        ...init?.headers,
+      },
+    })
+  } catch {
+    throw new ApiError(offline, 0)
+  }
 
   if (!response.ok) {
     throw new ApiError(await readError(response), response.status)
@@ -34,5 +41,5 @@ async function readError(response: Response): Promise<string> {
   } catch {
     // corpo vazio ou não-JSON
   }
-  return 'A loja não respondeu. Confere se a API está no ar.'
+  return offline
 }

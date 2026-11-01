@@ -1,6 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema({ _id: false })
+export class OrderPiece {
+  @Prop({ required: true })
+  productSlug!: string;
+
+  @Prop({ required: true })
+  size!: string;
+
+  @Prop({ required: false, default: '' })
+  color?: string;
+}
+
+const OrderPieceSchema = SchemaFactory.createForClass(OrderPiece);
+
+@Schema({ _id: false })
 export class OrderItem {
   @Prop({ required: true })
   productSlug!: string;
@@ -11,11 +25,20 @@ export class OrderItem {
   @Prop({ required: true })
   size!: string;
 
+  @Prop({ required: false, default: '' })
+  color?: string;
+
   @Prop({ required: true, min: 1 })
   quantity!: number;
 
   @Prop({ required: true, min: 0 })
   unitPriceCents!: number;
+
+  @Prop({ required: false, default: '' })
+  note?: string;
+
+  @Prop({ type: [OrderPieceSchema], required: false })
+  contents?: OrderPiece[];
 }
 
 const OrderItemSchema = SchemaFactory.createForClass(OrderItem);
@@ -33,6 +56,9 @@ export class Order {
 
   @Prop({ required: true, min: 0 })
   totalCents!: number;
+
+  @Prop({ required: false, enum: ['P', 'M', 'G'], type: String })
+  boxSize?: 'P' | 'M' | 'G';
 
   @Prop({
     required: true,

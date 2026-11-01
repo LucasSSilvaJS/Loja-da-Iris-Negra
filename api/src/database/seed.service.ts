@@ -6,6 +6,14 @@ import { Category } from '../modules/categories/schemas/category.schema';
 import { Product } from '../modules/products/schemas/product.schema';
 import { Track } from '../modules/playlist/schemas/track.schema';
 
+function anglesOf(image: string): string[] {
+  const dot = image.lastIndexOf('.');
+  if (dot < 0) return [image];
+  const stem = image.slice(0, dot);
+  const ext = image.slice(dot);
+  return [image, `${stem}-2${ext}`, `${stem}-3${ext}`];
+}
+
 @Injectable()
 export class SeedService implements OnModuleInit {
   constructor(
@@ -15,20 +23,26 @@ export class SeedService implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const existing = await this.categories.estimatedDocumentCount();
-    if (existing === 0) {
-      await this.categories.insertMany(categoriesSeed);
-    }
+    await this.syncCategories();
     await this.syncProducts();
     await this.syncTracks();
   }
 
+  private async syncCategories(): Promise<void> {
+    const slugs = categoriesSeed.map((category) => category.slug);
+    await this.categories.deleteMany({ slug: { $nin: slugs } });
+    for (const category of categoriesSeed) {
+      await this.categories.updateOne({ slug: category.slug }, { $set: category }, { upsert: true });
+    }
+  }
+
   private async syncProducts(): Promise<void> {
+    const slugs = productsSeed.map((product) => product.slug);
+    await this.products.deleteMany({ slug: { $nin: slugs } });
     for (const product of productsSeed) {
-      const image = `/produtos/${product.slug}.png`;
       await this.products.updateOne(
         { slug: product.slug },
-        { $set: { image }, $setOnInsert: product },
+        { $set: { ...product, gallery: anglesOf(product.image) } },
         { upsert: true },
       );
     }

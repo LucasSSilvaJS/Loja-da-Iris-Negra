@@ -4,7 +4,9 @@ import {
   ArrayMaxSize,
   ArrayMinSize,
   IsArray,
+  IsIn,
   IsInt,
+  IsOptional,
   IsString,
   Matches,
   Max,
@@ -13,6 +15,25 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
+
+export class BoxPieceDto {
+  @ApiProperty({ example: 'camisa-iris' })
+  @IsString()
+  @Matches(/^[a-z0-9-]+$/, { message: 'A pe\u00e7a informada n\u00e3o \u00e9 v\u00e1lida.' })
+  productSlug!: string;
+
+  @ApiProperty({ example: 'M' })
+  @IsString()
+  @MinLength(1)
+  @MaxLength(20)
+  size!: string;
+
+  @ApiProperty({ required: false, example: 'preto' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(24)
+  color?: string;
+}
 
 export class OrderItemDto {
   @ApiProperty({ example: 'camiseta-raven' })
@@ -30,8 +51,22 @@ export class OrderItemDto {
   @Type(() => Number)
   @IsInt()
   @Min(1, { message: 'A quantidade mínima é 1.' })
-  @Max(10, { message: 'O máximo por peça é 10.' })
+  @Max(10, { message: 'O m\u00e1ximo por pe\u00e7a \u00e9 10.' })
   quantity!: number;
+
+  @ApiProperty({ required: false, example: 'preto' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(24)
+  color?: string;
+
+  @ApiProperty({ required: false, type: [BoxPieceDto] })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(32)
+  @ValidateNested({ each: true })
+  @Type(() => BoxPieceDto)
+  contents?: BoxPieceDto[];
 }
 
 export class CreateOrderDto {
@@ -42,6 +77,11 @@ export class CreateOrderDto {
   @ValidateNested({ each: true })
   @Type(() => OrderItemDto)
   items!: OrderItemDto[];
+
+  @ApiProperty({ required: false, enum: ['P', 'M', 'G'] })
+  @IsOptional()
+  @IsIn(['P', 'M', 'G'])
+  boxSize?: 'P' | 'M' | 'G';
 }
 
 export class OrderItemResponseDto {
@@ -54,11 +94,20 @@ export class OrderItemResponseDto {
   @ApiProperty()
   size!: string;
 
+  @ApiProperty({ required: false })
+  color?: string;
+
   @ApiProperty()
   quantity!: number;
 
   @ApiProperty()
   unitPriceCents!: number;
+
+  @ApiProperty({ required: false })
+  note?: string;
+
+  @ApiProperty({ required: false, type: [BoxPieceDto] })
+  contents?: BoxPieceDto[];
 }
 
 export class OrderResponseDto {
@@ -73,6 +122,9 @@ export class OrderResponseDto {
 
   @ApiProperty()
   totalCents!: number;
+
+  @ApiProperty({ required: false, enum: ['P', 'M', 'G'] })
+  boxSize?: 'P' | 'M' | 'G';
 
   @ApiProperty({
     enum: ['aguardando_whatsapp', 'confirmado', 'enviado', 'cancelado'],

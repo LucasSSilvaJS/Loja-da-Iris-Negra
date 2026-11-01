@@ -5,10 +5,11 @@ type QuantityFieldProps = {
   value: number
   max?: number
   label: string
+  disabled?: boolean
   onChange: (quantity: number) => void
 }
 
-export function QuantityField({ value, max = 10, label, onChange }: QuantityFieldProps) {
+export function QuantityField({ value, max = 10, label, disabled = false, onChange }: QuantityFieldProps) {
   const [draft, setDraft] = useState(String(value))
 
   useEffect(() => {
@@ -25,11 +26,11 @@ export function QuantityField({ value, max = 10, label, onChange }: QuantityFiel
   }
 
   return (
-    <div className="qty" role="group" aria-label={label}>
+    <div className={disabled ? 'qty is-off' : 'qty'} role="group" aria-label={label}>
       <button
         type="button"
         aria-label={`Diminuir ${label}`}
-        disabled={value <= 1}
+        disabled={disabled || value <= 1}
         onClick={() => onChange(value - 1)}
       >
         <MdRemove aria-hidden="true" />
@@ -37,6 +38,7 @@ export function QuantityField({ value, max = 10, label, onChange }: QuantityFiel
       <input
         inputMode="numeric"
         aria-label={label}
+        disabled={disabled}
         value={draft}
         onChange={(event) => setDraft(event.target.value.replace(/\D/g, '').slice(0, 2))}
         onBlur={() => commit(draft)}
@@ -50,7 +52,7 @@ export function QuantityField({ value, max = 10, label, onChange }: QuantityFiel
       <button
         type="button"
         aria-label={`Aumentar ${label}`}
-        disabled={value >= max}
+        disabled={disabled || value >= max}
         onClick={() => onChange(value + 1)}
       >
         <MdAdd aria-hidden="true" />

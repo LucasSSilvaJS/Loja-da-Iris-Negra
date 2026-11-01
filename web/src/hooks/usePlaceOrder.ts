@@ -8,7 +8,8 @@ export function usePlaceOrder() {
   const sending = useCart((state) => state.placing)
 
   async function place() {
-    const { items, direct, beginPlace, endPlace, clear, clearDirect } = useCart.getState()
+    const { items, direct, directBoxSize, boxSize, beginPlace, endPlace, clear, clearDirect } =
+      useCart.getState()
     const lines = direct ?? items
     if (lines.length === 0 || !beginPlace()) return
     try {
@@ -17,7 +18,10 @@ export function usePlaceOrder() {
           productSlug: item.productSlug,
           size: item.size,
           quantity: item.quantity,
+          color: item.color || undefined,
+          contents: item.contents,
         })),
+        boxSize: (direct ? directBoxSize : boxSize) ?? undefined,
       })
       if (direct) clearDirect()
       else clear()

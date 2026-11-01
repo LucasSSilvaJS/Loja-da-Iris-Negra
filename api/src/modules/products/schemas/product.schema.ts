@@ -28,6 +28,12 @@ export class Product {
   @Prop({ required: true, min: 0 })
   priceCents!: number;
 
+  @Prop({ required: false, min: 0, type: Number })
+  compareAtCents?: number | null;
+
+  @Prop({ required: true, default: false })
+  priceOnRequest!: boolean;
+
   @Prop({ required: true, index: true })
   categorySlug!: string;
 
@@ -40,8 +46,14 @@ export class Product {
   @Prop({ required: true, default: '' })
   image!: string;
 
+  @Prop({ type: [String], default: [] })
+  gallery!: string[];
+
   @Prop({ type: [String], required: true })
   sizes!: string[];
+
+  @Prop({ type: [String], default: [] })
+  colors!: string[];
 
   @Prop({ required: true, min: 0 })
   stock!: number;

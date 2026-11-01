@@ -16,12 +16,14 @@
     "vite": "^8.3.0"
   },
   "dependencies": {
+    "hazeglow": "^0.6.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-icons": "^5.7.0",
     "react-modern-audio-player": "^2.4.4",
     "react-router-dom": "^7.18.4",
     "sonner": "^2.0.8",
+    "swiper": "^14.4.0",
     "zustand": "^5.0.15"
   }
 }

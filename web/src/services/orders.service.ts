@@ -1,8 +1,9 @@
-import type { Order } from '../types/domain'
+import type { BoxPiece, Order } from '../types/domain'
 import { request } from './http'
 
 export type CreateOrderPayload = {
-  items: { productSlug: string; size: string; quantity: number }[]
+  items: { productSlug: string; size: string; quantity: number; color?: string; contents?: BoxPiece[] }[]
+  boxSize?: 'P' | 'M' | 'G'
 }
 
 export const ordersService = {

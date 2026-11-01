@@ -12,7 +12,7 @@ export class CategoriesController {
   @ApiOperation({
     summary: 'Lista os tipos de produto',
     description:
-      'Prateleiras da banda (camisas, adesivos, bonés) e a prateleira da Eva.',
+      'Prateleiras da loja: camisas, bon\u00e9s, joias, pel\u00facias, tabacaria, sex shop, box e Eva.',
   })
   @ApiOkResponse({ type: CategoryResponseDto, isArray: true })
   list(): Promise<CategoryResponseDto[]> {

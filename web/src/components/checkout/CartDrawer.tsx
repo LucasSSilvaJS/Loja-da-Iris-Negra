@@ -1,7 +1,8 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { MdClose, MdDeleteOutline, MdShoppingBag } from 'react-icons/md'
 import { Link, useLocation } from 'react-router-dom'
-import { formatBRL } from '../../lib/money'
+import { formatAsking, formatBRL } from '../../lib/money'
+import { variantLabel } from '../../lib/variant'
 import { cartCount, cartTotal, lineMax, useCart } from '../../stores/cart.store'
 import { ProductShot } from '../art/ProductShot'
 import { QuantityField } from './QuantityField'
@@ -98,28 +99,30 @@ export function useBagDock(): { panel: ReactNode; button: ReactNode } {
             <>
               <ul className="bag bag-drawer">
                 {items.map((item) => (
-                  <li key={`${item.productSlug}-${item.size}`}>
+                  <li key={`${item.productSlug}-${item.size}-${item.color ?? ''}-${item.note ?? ''}`}>
                     <ProductShot motif={item.motif} image={item.image} alt="" />
                     <div className="bag-line">
                       <div>
                         <h3>{item.name}</h3>
+                        {item.note ? <p className="line-note">{item.note}</p> : null}
                         <p>
-                          {item.size} · {formatBRL(item.unitPriceCents)}
+                          {item.note ? '' : `${variantLabel(item)} · `}
+                          {formatAsking(item.unitPriceCents, item.priceOnRequest)}
                         </p>
                       </div>
                       <button
                         type="button"
                         className="icon-btn"
-                        aria-label={`Tirar ${item.name}, tamanho ${item.size}`}
-                        onClick={() => remove(item.productSlug, item.size)}
+                        aria-label={`Tirar ${item.name}, ${variantLabel(item)}`}
+                        onClick={() => remove(item.productSlug, item.size, item.color, item.note)}
                       >
                         <MdDeleteOutline aria-hidden="true" />
                       </button>
                       <QuantityField
                         value={item.quantity}
-                        max={lineMax(items, item)}
-                        label={`Quantidade de ${item.name}, tamanho ${item.size}`}
-                        onChange={(quantity) => setQuantity(item.productSlug, item.size, quantity)}
+                        max={Math.max(lineMax(items, item), item.quantity)}
+                        label={`Quantidade de ${item.name}, ${variantLabel(item)}`}
+                        onChange={(quantity) => setQuantity(item.productSlug, item.size, quantity, item.color, item.note)}
                       />
                     </div>
                   </li>

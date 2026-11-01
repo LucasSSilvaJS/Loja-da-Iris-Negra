@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Link, Outlet, useLocation } from 'react-router-dom'
-import { CategoryNav } from './CategoryNav'
+import { Outlet, useLocation } from 'react-router-dom'
+import { catalogService } from '../../services/catalog.service'
+import { useCart } from '../../stores/cart.store'
+import { BrandLockup, CategoryNav } from './CategoryNav'
 import { CornerDock } from './CornerDock'
 import { PlaylistBar } from './PlaylistBar'
 
@@ -8,10 +10,31 @@ export function AppShell() {
   const { pathname } = useLocation()
   const onChat = pathname === '/chat'
   const [chatOpen, setChatOpen] = useState(false)
+  const noteStocks = useCart((store) => store.noteStocks)
 
   useEffect(() => {
     if (onChat) setChatOpen(false)
   }, [onChat])
+
+  useEffect(() => {
+    let active = true
+    catalogService
+      .products()
+      .then((products) => {
+        if (!active) return
+        noteStocks(
+          products.map((product) => ({
+            slug: product.slug,
+            stock: product.madeToOrder ? null : product.stock,
+            madeToOrder: product.madeToOrder,
+          })),
+        )
+      })
+      .catch(() => undefined)
+    return () => {
+      active = false
+    }
+  }, [noteStocks])
 
   return (
     <div className={onChat ? 'page is-chat' : 'page'}>
@@ -19,12 +42,7 @@ export function AppShell() {
         pular para o conteúdo
       </a>
       <header className="topbar">
-        <Link className="brand-mark" to="/" aria-label="Íris Negra, início">
-          <img className="portrait" src="/base/logo-iris.png" alt="" />
-        </Link>
-        <Link className="brand" to="/">
-          Íris Negra
-        </Link>
+        <BrandLockup />
       </header>
 
       <div className="stage">
@@ -36,7 +54,6 @@ export function AppShell() {
 
       <PlaylistBar />
       <div className="player-shelf">
-        <p className="player-credit">Copyright © Íris Negra. Loja em parceria com a Eva. Recife.</p>
         <CornerDock chatOpen={onChat ? false : chatOpen} showChat={!onChat} onChatOpenChange={setChatOpen} />
       </div>
     </div>

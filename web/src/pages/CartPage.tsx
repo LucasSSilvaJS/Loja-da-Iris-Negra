@@ -1,9 +1,11 @@
-import { MdDeleteOutline } from 'react-icons/md'
+import { MdDeleteOutline, MdHome } from 'react-icons/md'
 import { Link, useNavigate } from 'react-router-dom'
 import { ProductShot } from '../components/art/ProductShot'
 import { QuantityField } from '../components/checkout/QuantityField'
+import { CrtFrame } from '../components/ui/CrtFrame'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { formatBRL } from '../lib/money'
+import { formatAsking, formatBRL } from '../lib/money'
+import { variantLabel } from '../lib/variant'
 import { cartCount, cartTotal, lineMax, useCart } from '../stores/cart.store'
 
 export function CartPage() {
@@ -17,37 +19,48 @@ export function CartPage() {
 
   return (
     <div className="stack">
-      <header className="section-head">
-        <h1>Sacola</h1>
-      </header>
       {items.length === 0 ? (
-        <p className="status">
-          Sua sacola está vazia. <Link to="/">Volta pro cartaz</Link> e escolhe uma peça.
-        </p>
+        <CrtFrame>
+          <header className="crt-lead">
+            <p className="crt-kicker">menu</p>
+            <h1>Sacola</h1>
+          </header>
+          <p className="summary-note">Nenhuma peça na sacola.</p>
+          <Link className="link-btn crt-home" to="/">
+            <MdHome aria-hidden="true" />
+            Voltar para a página inicial
+          </Link>
+        </CrtFrame>
       ) : (
+        <CrtFrame>
+        <header className="crt-lead">
+          <h1>Sacola</h1>
+        </header>
         <div className="checkout-layout">
           <ul className="bag">
             {items.map((item) => (
-              <li key={`${item.productSlug}-${item.size}`}>
+              <li key={`${item.productSlug}-${item.size}-${item.color ?? ''}-${item.note ?? ''}`}>
                 <ProductShot motif={item.motif} image={item.image} alt="" />
                 <div>
                   <h2>{item.name}</h2>
+                  {item.note ? <p className="line-note">{item.note}</p> : null}
                   <p>
-                    {item.size}
-                    {item.madeToOrder ? ' · sob encomenda' : ''} · {formatBRL(item.unitPriceCents)}
+                    {item.note ? '' : `${variantLabel(item)}${item.madeToOrder ? ' · sob encomenda' : ''} · `}
+                    {item.note && item.madeToOrder ? 'sob encomenda · ' : ''}
+                    {formatAsking(item.unitPriceCents, item.priceOnRequest)}
                   </p>
                   <div className="bag-actions">
                     <QuantityField
                       value={item.quantity}
-                      max={lineMax(items, item)}
-                      label={`Quantidade de ${item.name}, tamanho ${item.size}`}
-                      onChange={(quantity) => setQuantity(item.productSlug, item.size, quantity)}
+                      max={Math.max(lineMax(items, item), item.quantity)}
+                      label={`Quantidade de ${item.name}, ${variantLabel(item)}`}
+                      onChange={(quantity) => setQuantity(item.productSlug, item.size, quantity, item.color, item.note)}
                     />
-                    <strong>{formatBRL(item.unitPriceCents * item.quantity)}</strong>
+                    <strong>{formatAsking(item.unitPriceCents * item.quantity, item.priceOnRequest)}</strong>
                     <button
                       type="button"
                       className="text-btn"
-                      onClick={() => remove(item.productSlug, item.size)}
+                      onClick={() => remove(item.productSlug, item.size, item.color, item.note)}
                     >
                       <MdDeleteOutline aria-hidden="true" /> tirar
                     </button>
@@ -74,6 +87,7 @@ export function CartPage() {
             <p className="summary-note">Pagamento e entrega combinam no WhatsApp.</p>
           </aside>
         </div>
+        </CrtFrame>
       )}
     </div>
   )

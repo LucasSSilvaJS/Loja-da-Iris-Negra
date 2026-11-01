@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
+import { ApiError } from '../services/http'
 
 type Resource<T> =
-  | { status: 'loading'; data: null; error: null }
-  | { status: 'error'; data: null; error: string }
-  | { status: 'ready'; data: T; error: null }
+  | { status: 'loading'; data: null; error: null; code: null }
+  | { status: 'error'; data: null; error: string; code: number | null }
+  | { status: 'ready'; data: T; error: null; code: null }
 
 export function useResource<T>(
   key: string,
@@ -14,6 +15,7 @@ export function useResource<T>(
     status: 'loading',
     data: null,
     error: null,
+    code: null,
   })
 
   useEffect(() => {
@@ -22,15 +24,16 @@ export function useResource<T>(
 
   useEffect(() => {
     let active = true
-    setState({ status: 'loading', data: null, error: null })
+    setState({ status: 'loading', data: null, error: null, code: null })
     loaderRef.current(key).then(
       (data) => {
-        if (active) setState({ status: 'ready', data, error: null })
+        if (active) setState({ status: 'ready', data, error: null, code: null })
       },
       (error: unknown) => {
         if (!active) return
         const message = error instanceof Error ? error.message : 'Não rolou.'
-        setState({ status: 'error', data: null, error: message })
+        const code = error instanceof ApiError ? error.status : null
+        setState({ status: 'error', data: null, error: message, code })
       },
     )
     return () => {
